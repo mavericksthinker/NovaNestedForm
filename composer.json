@@ -1,0 +1,39 @@
+{
+    "name": "mavericks/nova-nested-form",
+    "description": "A Laravel Nova field.",
+    "keywords": [
+        "laravel",
+        "nova",
+        "nested",
+        "relationship",
+        "form"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "repositories": [{
+        "type": "composer",
+        "url": "https://nova.laravel.com"
+    }],
+    "autoload": {
+        "psr-4": {
+            "Mavericks\\NovaNestedForm\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mavericks\\NovaNestedForm\\FieldServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "laravel/nova": "^1.2"
+    }
+}
