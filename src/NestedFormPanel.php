@@ -15,6 +15,7 @@ class NestedFormPanel extends Panel
 
     /**
      * Constructor.
+     * @param NovaNestedForm $nestedForm
      */
     public function __construct(NovaNestedForm $nestedForm)
     {
@@ -27,6 +28,8 @@ class NestedFormPanel extends Panel
 
     /**
      * Getter.
+     * @param $key
+     * @return
      */
     public function __get($key)
     {
@@ -35,6 +38,8 @@ class NestedFormPanel extends Panel
 
     /**
      * Setter.
+     * @param $key
+     * @param $value
      */
     public function __set($key, $value)
     {
@@ -43,6 +48,9 @@ class NestedFormPanel extends Panel
 
     /**
      * Caller.
+     * @param $method
+     * @param $arguments
+     * @return mixed
      */
     public function __call($method, $arguments)
     {

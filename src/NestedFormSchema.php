@@ -42,7 +42,7 @@ class NestedFormSchema implements JsonSerializable
     public $fields;
 
     /**
-     * Name of the fields' fitler method.
+     * Name of the fields' filter method.
      *
      * @var string
      */
@@ -50,6 +50,9 @@ class NestedFormSchema implements JsonSerializable
 
     /**
      * Create a new NestedFormSchema instance.
+     * @param Model $model
+     * @param $index
+     * @param NovaNestedForm $parentForm
      */
     public function __construct(Model $model, $index, NovaNestedForm $parentForm)
     {
@@ -62,6 +65,7 @@ class NestedFormSchema implements JsonSerializable
 
     /**
      * Get the fields for the current schema.
+     * @throws \ReflectionException
      */
     protected function fields()
     {
@@ -167,6 +171,8 @@ class NestedFormSchema implements JsonSerializable
 
     /**
      * Create a new NestedFormSchema instance.
+     * @param array $arguments
+     * @return NestedFormSchema
      */
     public static function make(...$arguments)
     {
