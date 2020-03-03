@@ -1,14 +1,15 @@
 <script>
-import BelongsToField from '@/components/Form/BelongsToField.vue'
-import storage from '@/storage/BelongsToFieldStorage'
+import MorphToField from '@/components/Form/MorphToField.vue'
+import storage from '@/storage/MorphToFieldStorage'
+import { Errors } from 'laravel-nova'
 
 export default {
-  mixins: [BelongsToField],
+  mixins: [MorphToField],
   methods: {
     /**
      * Get the resources that may be related to this resource.
      */
-    getAvailableResources() {
+    getAvailableResources(search = '') {
       return storage
         .fetchAvailableResources(
           this.resourceName,
@@ -19,6 +20,7 @@ export default {
           if (this.initializingWithExistingResource || !this.isSearchable) {
             this.withTrashed = withTrashed
           }
+
           this.initializingWithExistingResource = false
           this.availableResources = resources
           this.softDeletes = softDeletes
