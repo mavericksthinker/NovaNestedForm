@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Request as RequestFacade;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Fields\ResourceRelationshipGuesser;
-use Laravel\Nova\Http\Controllers\ResourceDestroyController;
-use Laravel\Nova\Http\Controllers\ResourceDetachController;
-use Laravel\Nova\Http\Requests\DeleteResourceRequest;
-use Laravel\Nova\Http\Requests\DetachResourceRequest;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Nova;
 use Mavericks\NovaNestedForm\Traits\CanBeCollapsed;
@@ -53,13 +49,6 @@ class NovaNestedForm extends Field
      * @var string
      */
     public $resourceInstance;
-
-    /**
-     * Key name.
-     *
-     * @var string
-     */
-    public $keyName;
 
     /**
      * The field's plural label.
@@ -111,20 +100,6 @@ class NovaNestedForm extends Field
     protected $request;
 
     /**
-     * The maximum number of children.
-     *
-     * @var int
-     */
-    public $max = 0;
-
-    /**
-     * The minimum number of children.
-     *
-     * @var int
-     */
-    public $min = 0;
-
-    /**
      * Indicates if the element should be shown on the index view.
      *
      * @var bool
@@ -141,7 +116,7 @@ class NovaNestedForm extends Field
     /**
      * Return context
      *
-     * @var Panel|Field|NovaNestedForm
+     * @var Field|NovaNestedForm
      */
     protected $returnContext;
 
@@ -163,7 +138,6 @@ class NovaNestedForm extends Field
         $this->resourceInstance = new $resource($resource::newModel());
         $this->pluralLabel = Str::plural($this->name);
         $this->resourceName = $resource::uriKey();
-        $this->keyName = (new $this->resourceClass::$model)->getKeyName();
         $this->viaResource = app(NovaRequest::class)->route('resource');
         $this->viaRelationship = $this->attribute;
         $this->returnContext = $this;
@@ -219,61 +193,6 @@ class NovaNestedForm extends Field
     }
 
     /**
-     * Get the relationship type.
-     * @throws \ReflectionException
-     */
-    protected function getRelationshipType()
-    {
-        return (new \ReflectionClass(Nova::modelInstanceForKey($this->viaResource)->{$this->viaRelationship}()))->getShortName();
-    }
-
-
-    /**
-     * Whether the current relationship if many or one.
-     * @throws \ReflectionException
-     */
-    protected function isManyRelationsip()
-    {
-        return Str::contains($this->getRelationshipType(), 'Many');
-    }
-
-    /**
-     * Delete the children not sent through the request.
-     * @throws \ReflectionException
-     */
-    protected function deleteChildren(NovaRequest $request, $model, $children)
-    {
-        if ($this->getRelationshipType() === 'BelongsToMany') {
-            return (new ResourceDetachController)->handle($this->getDetachRequest($request, $model, $children));
-        }
-
-        return (new ResourceDestroyController)->handle($this->getDeleteRequest($request, $model, $children));
-    }
-
-    /**
-     * Get a request for detach.
-     */
-    protected function getDetachRequest(NovaRequest $request, $model, $children)
-    {
-        return DetachResourceRequest::createFrom($request->replace([
-            'viaResource' => $this->viaResource,
-            'viaResourceId' => $model->id,
-            'viaRelationship' => $this->viaRelationship,
-            'resources' => $model->{$this->viaRelationship}()->select($this->attribute . '.' . $this->keyName)->whereNotIn($this->attribute . '.' . $this->keyName, $children->pluck($this->keyName))->pluck($this->keyName)
-        ]));
-    }
-
-    /**
-     * Get a request for delete.
-     */
-    protected function getDeleteRequest(NovaRequest $request, $model, $children)
-    {
-        return DeleteResourceRequest::createFrom($request->replace([
-            'resources' => $model->{$this->viaRelationship}()->whereNotIn($this->keyName, $children->pluck($this->keyName))->pluck($this->keyName)
-        ]));
-    }
-
-    /**
      * Set the viaResource information as meta.
      *
      * @param Model $resource
@@ -322,39 +241,5 @@ class NovaNestedForm extends Field
     protected function isUsingNova2()
     {
         return Str::startsWith(Nova::version(), '2');
-    }
-
-    /**
-     * Set the minimum number of children.
-     */
-    public function min(int $min)
-    {
-        $this->min = $min;
-
-        return $this->returnContext;
-    }
-
-    /**
-     * Prepare the field for JSON serialization.
-     *
-     * @return array
-     * @throws \ReflectionException
-     */
-    public function jsonSerialize()
-    {
-        return array_merge(
-            parent::jsonSerialize(),
-            [
-                'singularLabel' => $this->singularLabel,
-                'pluralLabel' => $this->pluralLabel,
-                'resourceName' => $this->resourceName,
-                'viaRelationship' => $this->viaRelationship,
-                'viaResource' => $this->viaResource,
-                'keyName' => $this->keyName,
-                'min' => $this->min,
-                'max' => $this->isManyRelationsip() ? $this->max : 1,
-                'displayIf' => isset($this->displayIfCallback) ? call_user_func($this->displayIfCallback) : null
-            ]
-        );
     }
 }
