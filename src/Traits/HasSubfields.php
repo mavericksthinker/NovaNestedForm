@@ -78,7 +78,7 @@ trait HasSubfields
     {
         $this->inverseRelationship = $inverseRelationship;
 
-        $foreignKeyMethod = $this->isUsingNova2() ? 'getForeignKeyName' : 'getForeignKey';
+        $foreignKeyMethod = $this->isUsingNova2AndAbove() ? 'getForeignKeyName' : 'getForeignKey';
 
         $this->inverseRelationshipKey = $this->resourceInstance::newModel()->{$inverseRelationship}()->{$foreignKeyMethod}();
 

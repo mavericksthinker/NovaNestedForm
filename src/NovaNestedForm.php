@@ -166,11 +166,7 @@ class NovaNestedForm extends Field
      */
     public function resolve($resource, $attribute = null)
     {
-        try {
-            $this->setRelationType($resource)->setViaResourceInformation($resource)->setSchema()->setChildren($resource);
-        } catch (\Exception $e) {
-            throw new \Exception($e);
-        }
+        $this->setRelationType($resource)->setViaResourceInformation($resource)->setSchema()->setChildren($resource);
     }
 
     /**
@@ -238,8 +234,8 @@ class NovaNestedForm extends Field
      *
      * @return  bool
      */
-    protected function isUsingNova2()
+    protected function isUsingNova2AndAbove()
     {
-        return Str::startsWith(Nova::version(), '2');
+        return (int) Str::before(Nova::version(), '.') >= 2;
     }
 }
