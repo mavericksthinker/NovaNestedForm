@@ -10,7 +10,8 @@
     ],
     "license": "MIT",
     "require": {
-        "php": ">=7.1.0"
+        "php": ">=7.1.0",
+        "laravel/framework": "7.*"
     },
     "repositories": [{
         "type": "composer",
@@ -34,6 +35,6 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-        "laravel/nova": "^1.2"
+        "laravel/nova": "3.*"
     }
 }
