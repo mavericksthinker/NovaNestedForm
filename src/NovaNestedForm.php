@@ -166,7 +166,11 @@ class NovaNestedForm extends Field
      */
     public function resolve($resource, $attribute = null)
     {
-        $this->setRelationType($resource)->setViaResourceInformation($resource)->setSchema()->setChildren($resource);
+        try {
+            $this->setRelationType($resource)->setViaResourceInformation($resource)->setSchema()->setChildren($resource);
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
     }
 
     /**
